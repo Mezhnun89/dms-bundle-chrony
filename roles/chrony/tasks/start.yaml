@@ -1,0 +1,16 @@
+
+---
+
+- name: Reset service_facts
+  service_facts:
+
+- name: Start chrony
+  systemd:
+    name: chronyd.service
+    state: started
+    enabled: yes
+  when: "'chronyd.service' in ansible_facts.services"
+
+- name: Синхронизация времени
+  command: chronyc makestep
+  become: true

@@ -1,0 +1,23 @@
+---
+
+- hosts: "{{ DTMS_INSTALLATION_NAME }}"
+  tasks:
+    - name: Init
+      vars:
+        title: "Инициализация"
+        description: "Инициализация"
+      include_role: 
+        name: "{{ DTMS_INSTALLATION_NAME }}"
+        tasks_from: init.yaml
+    - name: Check network connectivity
+      vars:
+        title: "Проверка сети перед деплоем"
+        description: "Проверка сети перед деплоем"    
+      ping:
+    - name: Check before deploy
+      vars:
+        title: "Проверка окружения перед деплоем"
+        description: "Проверка окружения перед деплоем"
+      include_role: 
+        name: "{{ DTMS_INSTALLATION_NAME }}"
+        tasks_from: check.yaml

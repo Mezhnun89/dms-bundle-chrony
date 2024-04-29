@@ -1,0 +1,24 @@
+---
+
+- set_fact:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Configure chrony
+  template: 
+    src: chrony.conf.j2
+    dest: "/etc/chrony.conf"
+    backup: yes
+    mode: 0644
+  register: changed
+
+
+# - name: Configure systemd chrony service
+#   template:
+#     src: "{{ service_name.value }}.service.j2"
+#     dest: "{{ service_dir.value }}/{{ service_name.value }}.service"
+#   register: services
+#   notify: 
+#     - systemd daemon-reload
+
+
+

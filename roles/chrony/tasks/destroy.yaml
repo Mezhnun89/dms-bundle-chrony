@@ -1,0 +1,8 @@
+
+---
+
+- name: Remove Packages
+  package:
+    name: 
+      - chrony
+    state: absent

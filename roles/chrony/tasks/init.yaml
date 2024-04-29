@@ -1,0 +1,102 @@
+---
+
+# Step 1 
+
+- name: Override OS Version
+  set_fact:
+    ansible_distribution: "ALT Server"
+    ansible_distribution_version: "10"
+    ansible_distribution_major_version: "10"
+  when:
+    - ansible_distribution in ["Altlinux","ALT Server"]
+    - ansible_distribution_version in ["p10","10","10.0","10.1"]
+
+- name: Override OS Version
+  set_fact:
+    ansible_distribution: "ALT Server"
+    ansible_distribution_major_version: "{{ ansible_distribution_version }}"
+  when:
+    - ansible_distribution in ["Altlinux","ALT Server"]
+    - ansible_distribution_version in ["8.4"]
+
+- name: Override OS Version
+  set_fact:
+    ansible_distribution: "CentOS"
+  when:
+    - ansible_distribution in ["RedHat","CentOS"]
+    - ansible_distribution_version in ["7.9"]
+
+- name: Override OS Version
+  set_fact:
+    ansible_distribution_version: "7.3"
+  when:
+    - ansible_distribution in ["RED"]
+    - ansible_distribution_version in ["7.3","7.3.0","7.3.1","7.3.2","7.3.3","7.3.4","7.3.5","7.3.6","7.3.7","7.3.8","7.3.9"]
+
+- name: Override OS Version
+  set_fact:
+    ansible_distribution_version: "1.7"
+  when:
+    - ansible_distribution in ["Astra Linux"]
+    - ansible_distribution_version in ["1.7_x86-64"]
+
+- name: Set packages_by_os
+  set_fact:
+    packages_by_os:
+      - os: ALT Server
+        os_version: '8.4'
+        repository: "{{ nexus.value }}/repository/altlinux c8.4/x86_64"
+        packages:
+          - chrony
+      - os: ALT Server
+        os_version: '10'
+        repository: "{{ nexus.value }}/repository/altlinux p10/x86_64"
+        packages:
+          - chrony
+      - os: CentOS
+        os_version: '7.9'
+        repository: "{{ nexus.value }}/repository/redhat/7.9/x86_64/"
+        packages:
+          - chrony
+      - os: RED
+        os_version: '7.3'
+        repository: "{{ nexus.value }}/repository/redos/7.3c/x86_64/"
+        packages:
+          - chrony
+      - os: Astra Linux
+        os_version: '1.7'
+        repository: "{{ nexus.value }}/repository/astralinux/1.7v/x86_64/"
+        packages:
+          - chrony
+
+# Step 2
+
+- name: Import special var
+  include_vars: "{{ item['config'] }}"
+  with_items: "{{ applications }}"
+
+# Step 3
+
+- name: Set requirements_cpu
+  set_fact:
+   requirements_cpu: "{{ requirements | selectattr('name', 'match', 'cpu') | first }}"
+  when: requirements | selectattr('name', 'match', 'cpu') != []
+
+- name: Set requirements_ram
+  set_fact:
+   requirements_ram: "{{ requirements | selectattr('name', 'match', 'ram') | first }}"
+  when: requirements | selectattr('name', 'match', 'ram') != []
+
+- name: Set requirements_os
+  set_fact:
+   requirements_os: "{{ requirements | selectattr('name', 'match', 'os') | first }}"
+  when: requirements | selectattr('name', 'match', 'os') != []
+
+- name: Set requirements_os_value
+  set_fact:
+   requirements_os_value: "{{ requirements_os.value | selectattr('distribution', 'match', ansible_distribution) | first }}"
+  when: requirements_os.value | selectattr('distribution', 'match', ansible_distribution) != []
+
+- name: Set service facts
+  service_facts:
+

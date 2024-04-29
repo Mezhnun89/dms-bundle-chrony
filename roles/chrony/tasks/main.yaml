@@ -1,0 +1,12 @@
+---
+
+- name: Проверка, что Chrony запущен и включен
+  systemd:
+    name: "{{ chrony_service_name }}"
+    state: started
+    enabled: yes
+  become: true
+
+- name: Синхронизация времени
+  command: chronyc makestep
+  become: true

@@ -1,0 +1,10 @@
+
+
+---
+
+- name: Stop
+  include_tasks: stop.yaml
+
+- name: Start
+  include_tasks: start.yaml
+

@@ -1,0 +1,6 @@
+
+---
+
+NTP_SERVERS:
+    description: "NTP-сервера (разделенные запятой)"
+    value: "podd.test.gosuslugi.ru"

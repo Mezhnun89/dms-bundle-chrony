@@ -1,0 +1,1 @@
+rpm {{ packages_by_os | selectattr('os', 'equalto', ansible_distribution) | selectattr('os_version', 'equalto', ansible_distribution_version) | map(attribute='repository') | first }} dms

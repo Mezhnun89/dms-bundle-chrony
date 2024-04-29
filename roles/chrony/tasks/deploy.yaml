@@ -1,0 +1,4 @@
+---
+
+- name: Start Deploy
+  include_tasks: "os/{{ ansible_distribution | replace(' ','') }}/deploy.yaml"

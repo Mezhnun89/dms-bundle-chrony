@@ -1,0 +1,12 @@
+
+---
+
+- name: Reset service_facts
+  service_facts:
+
+- name: Stop chrony
+  systemd:
+    name: chronyd.service
+    state: stopped
+    enabled: yes
+  when: "'chronyd.service' in ansible_facts.services"

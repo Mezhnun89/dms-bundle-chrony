@@ -1,0 +1,30 @@
+---
+
+- name: Check Packages List
+  debug:
+    msg:
+      - "Nexus: {{ nexus.value }}"
+      - "Distibution: {{ ansible_distribution }}"
+      - "Distibution Version: {{ ansible_distribution_version }}"
+      - "Architecture: {{ ansible_architecture }}"
+      - "Repository URL: {{ packages_by_os | selectattr('os', 'equalto', ansible_distribution) | selectattr('os_version', 'equalto', ansible_distribution_version) | map(attribute='repository') | join or 'NULL' }}"
+      - "Packages: {{ packages_by_os | selectattr('os', 'equalto', ansible_distribution) | selectattr('os_version', 'equalto', ansible_distribution_version) | map(attribute='packages') | join(',') or 'NULL' }}"
+  failed_when: packages_by_os | selectattr('os', 'equalto', ansible_distribution) | selectattr('os_version', 'equalto', ansible_distribution_version) == []
+
+- name: Add DMS Offline Repo
+  yum_repository:
+    name: datamart-studio
+    description: Datamart Studio Offline Repo
+    file: dms
+    baseurl: "{{ packages_by_os | selectattr('os', 'equalto', ansible_distribution) | selectattr('os_version', 'equalto', ansible_distribution_version) | map(attribute='repository') | first }}"
+    enabled: no
+    gpgcheck: no
+
+- name: Install Packages
+  package:
+    name: "{{ packages_by_os | selectattr('os', 'equalto', ansible_distribution) | selectattr('os_version', 'equalto', ansible_distribution_version) | map(attribute='packages') | first }}"
+    state: present
+    update_cache: yes
+    disablerepo: "*"
+    enablerepo:
+      - datamart-studio

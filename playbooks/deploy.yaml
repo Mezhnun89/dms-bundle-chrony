@@ -1,0 +1,46 @@
+---
+
+- hosts: "{{ DTMS_INSTALLATION_NAME }}"
+  tasks:
+    - name: Init
+      vars:
+        title: "Инициализация"
+        description: "Инициализация"
+      include_role: 
+        name: "{{ DTMS_INSTALLATION_NAME }}"
+        tasks_from: init.yaml
+    - name: Check
+      vars:
+        title: "Проверка"
+        description: "Проверка"
+      include_role: 
+        name: "{{ DTMS_INSTALLATION_NAME }}"
+        tasks_from: check.yaml
+    - name: Info
+      vars:
+        title: "Информация"
+        description: "Информация"
+      include_role: 
+        name: "{{ DTMS_INSTALLATION_NAME }}"
+        tasks_from: info.yaml
+    - name: Deploy
+      vars:
+        title: "Установка приложения"
+        description: "Установка приложения"
+      include_role:
+        name: "{{ DTMS_INSTALLATION_NAME }}"
+        tasks_from: deploy.yaml
+    - name: Bind
+      vars:
+        title: "Применении конфигурации"
+        description: "Применение конфигурации"
+      include_role: 
+        name: "{{ DTMS_INSTALLATION_NAME }}"
+        tasks_from: bind.yaml
+    - name: Start
+      vars:
+        title: "Запуск приложения"
+        description: "Запуск приложения"
+      include_role: 
+        name: "{{ DTMS_INSTALLATION_NAME }}"
+        tasks_from: restart.yaml

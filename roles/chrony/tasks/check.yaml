@@ -1,0 +1,25 @@
+---
+
+###### Print info ######
+- name: Resources
+  debug: 
+   msg: 
+    - "CPU - {{ ansible_processor_vcpus }} CORE"
+    - "RAM - {{ ansible_memory_mb.real.total }} MB"
+    - "OS  - {{ ansible_distribution }} {{ ansible_distribution_version}}"
+
+###### Check system ######
+- name: Check CPU
+  debug:
+    msg: Check CPU - Installed {{ ansible_processor_vcpus }}, Required {{ requirements_cpu.value }}
+  failed_when: ansible_processor_vcpus < requirements_cpu.value | int
+
+- name: Check RAM
+  debug:
+    msg: Check RAM - Installed {{ ansible_memory_mb.real.total }}, Required {{ requirements_ram.value }}
+  failed_when: ansible_memory_mb.real.total < requirements_ram.value | int
+
+- name: Check OS
+  debug:
+    msg: Check OS - Installed {{ ansible_distribution }} {{ ansible_distribution_version}}
+  failed_when: requirements_os_value.distribution is not defined or ansible_distribution_version not in requirements_os_value.version | string

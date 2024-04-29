@@ -1,0 +1,16 @@
+#!/usr/bin/python3
+
+import urllib.request, json, os
+
+nexusURL = os.environ["NEXUS_BASE_URL"]
+nexusListedURL = ""
+nexusAPIResponse = ""
+continuationToken = ""
+
+while continuationToken != None:
+    if continuationToken == "": nexusListedURL = nexusURL
+    else: nexusListedURL = nexusURL + "&continuationToken=" + continuationToken
+    print(nexusListedURL)
+    with urllib.request.urlopen(nexusListedURL) as uru:
+        nexusAPIResponse = uru.read()
+        continuationToken =  json.loads(nexusAPIResponse)['continuationToken']

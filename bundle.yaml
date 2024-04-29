@@ -1,0 +1,10 @@
+
+---
+
+properties:
+  name: "dms-bundle-chrony"
+  title: "Клиент и сервер NTP"
+  description: "Установка Chrony"
+  version: '1.0.1'
+  license: 'open-source'
+  copyright: 'Datamart, LLC'

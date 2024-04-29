@@ -1,0 +1,7 @@
+---
+
+- name: Show information
+  debug: 
+    msg:
+      - "Bundle name - {{ properties[0].name }}"
+      - "Version {{ properties[0].name }} for install - {{ properties[0].version }}"

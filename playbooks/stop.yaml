@@ -1,0 +1,18 @@
+---
+
+- hosts: "{{ DTMS_INSTALLATION_NAME }}"
+  tasks:
+    - name: Init
+      vars:
+        title: "Инициализация"
+        description: "Инициализация"
+      include_role: 
+        name: "{{ DTMS_INSTALLATION_NAME }}"
+        tasks_from: init.yaml
+    - name: Stop "{{ DTMS_INSTALLATION_NAME }}"
+      vars:
+        title: "Остановка приложения"
+        description: "Остановка приложения"
+      include_role:
+        name: "{{ DTMS_INSTALLATION_NAME }}"
+        tasks_from: stop.yaml

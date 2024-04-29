@@ -1,0 +1,100 @@
+---
+
+properties:
+  - name: dtm-chrony
+    title: dtm-chrony
+    description: 'Пакет Chrony для синхронизации времени'
+    version: '4.3.2'
+    license: 'open-source'
+    copyright: 'datamart.ru'
+    install_priority: 80
+
+chrony_package: "{{ chrony_properties[0].name }}"
+chrony_service_name: "{{ chrony_properties[0].name }}"
+
+
+interfaces:
+  input:
+    - name: []
+      title: []
+      description: []
+      host: []
+      port: []
+      format: []
+      protocol: []
+  output:
+    - name: []
+      title: []
+      description: []
+      host: []
+      port: []
+      format: []
+      protocol: []
+      required: []
+
+dependencies:
+  - name: []
+    description: []
+    version: []
+
+applications:
+  - name: chrony
+    description: "Дополнительные переменные Chrony"
+    config: vars/chrony.yaml
+
+requirements:
+  - name: cpu
+    value: 1
+    description: "Количество требуемых ресурсов CPU"
+    application: chrony
+  - name: ram
+    value: 1000
+    description: "Количество требуемых ресурсов RAM"
+    application: chrony
+  - name: os
+    description: "Поддерживаемые операционные системы"
+    application: chrony
+    value:
+      - distribution: RedHat
+        alias: CentOS
+      - distribution: Altlinux
+        alias: ALT Server
+      - distribution: CentOS
+        version:
+          - 7.9
+      - distribution: ALT Server
+        version:
+          - p10
+          - 10
+          - 10.0
+          - 10.1
+          - 8.4
+      - distribution: RED
+        version:
+          - 7.3
+      - distribution: Astra Linux
+        version:
+          - 1.7
+
+nexus: 
+  description: "Сетевой адрес Nexus"
+  value: http://127.0.0.1:8881
+
+nexus_registry:
+  description: "Сетевой адрес docker registry"
+  value: 127.0.0.1:8882
+nexus_registry_user:    
+  description: "Пользователь для nexus docker registry"
+  value: ""
+nexus_registry_passwd:
+  description: "Пароль для nexus docker registry"
+  value: ""
+
+
+antivirus:
+  exclusions:
+    directories:
+      - /opt/applications/
+    ports:
+      - 8080
+      - 9090

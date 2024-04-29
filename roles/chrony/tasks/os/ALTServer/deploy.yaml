@@ -1,0 +1,59 @@
+
+---
+
+- name: Check Packages List
+  debug:
+    msg:
+      - "Nexus: {{ nexus.value }}"
+      - "Distibution: {{ ansible_distribution }}"
+      - "Distibution Version: {{ ansible_distribution_version }}"
+      - "Architecture: {{ ansible_architecture }}"
+      - "Repository URL: {{ packages_by_os | selectattr('os', 'equalto', ansible_distribution) | selectattr('os_version', 'equalto', ansible_distribution_version) | map(attribute='repository') | join or 'NULL' }}"
+      - "Packages: {{ packages_by_os | selectattr('os', 'equalto', ansible_distribution) | selectattr('os_version', 'equalto', ansible_distribution_version) | map(attribute='packages') | join(',') or 'NULL' }}"
+  failed_when: packages_by_os | selectattr('os', 'equalto', ansible_distribution) | selectattr('os_version', 'equalto', ansible_distribution_version) == []
+
+- name: Find Repolists
+  find:
+    paths:
+      - /etc/apt/
+    patterns: '*.list'
+    recurse: yes
+  register: finded_repolists
+
+- name: Disable Repositories
+  replace:
+    dest: "{{ item['path'] }}"
+    regexp: '^rpm(.+)$'
+    replace: '#DMS DISABLED: rpm\1'
+  with_items: "{{ finded_repolists.files }}"
+  loop_control:
+   label: "{{ item['path'] }}"
+
+  #The apt_repository module does not work witShout python3-apt, so templates are used
+- name: Add DMS Offline Repo
+  template:
+    src: os/ALTServer/sources.list.d/dms.list.j2
+    dest: /etc/apt/sources.list.d/dms.list
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Packages
+  package:
+    name: "{{ packages_by_os | selectattr('os', 'equalto', ansible_distribution) | selectattr('os_version', 'equalto', ansible_distribution_version) | map(attribute='packages') | first }}"
+    state: present
+    update_cache: yes
+
+- name: Enable Repositories
+  replace:
+    dest: "{{ item['path'] }}"
+    regexp: '^#DMS DISABLED: rpm(.+)$'
+    replace: 'rpm\1'
+  with_items: "{{ finded_repolists.files }}"
+  loop_control:
+   label: "{{ item['path'] }}"
+
+- name: Remove Datamart Nexus Offline Repo
+  file:
+    path: /etc/apt/sources.list.d/dms.list
+    state: absent
